@@ -1,9 +1,6 @@
 import pytest
 
 
-def test_addition():
-    assert 1 + 1 == 2
-
 
 def test_fix_repetition():
     import pandas as pd
@@ -18,10 +15,10 @@ def test_fix_repetition():
     }
     df = pd.DataFrame(data)
 
-    fixed_df = fix_repetition(df)
+    fix_repetition(df)
 
-    for i in range(len(fixed_df)):
-        assert len(set(fixed_df.iloc[i])) == len(fixed_df.iloc[i])
+    for i in range(len(df)):
+        assert len(set(df.iloc[i])) == len(df.iloc[i])
 
 
 def test_shift_single_column():
@@ -34,8 +31,8 @@ def test_shift_single_column():
         "column1": ["X", "Y", "Z", "W"],
     }
     df = pd.DataFrame(data)
+    df_check = pd.DataFrame(data)
+    shift_single_column(df, "column1", shift_value=1)
+    
 
-    shifted_df = shift_single_column(df, "column1", shift_value=1)
-    df = pd.DataFrame(data)
-
-    assert shifted_df["column1"].iloc[0] == df["column1"].iloc[-1]
+    assert df["column1"].iloc[0] == df_check["column1"].iloc[-1]
