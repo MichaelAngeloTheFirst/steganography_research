@@ -1,7 +1,6 @@
 import pandas as pd
 
 
-
 def shift_single_column(df, column_name, shift_value=1):
     column_to_shift = df[column_name]
 
@@ -15,8 +14,7 @@ def shift_single_column(df, column_name, shift_value=1):
 
 
 def move_columns(df, column, column_to_change):
-    """Function shifts the values of a column in one column, so there will be no same characters in the same row.
-    """
+    """Function shifts the values of a column in one column, so there will be no same characters in the same row."""
     iter = 0
     was_shifted = False
 
@@ -36,9 +34,7 @@ def fix_repetition_for_one_column(df, column_to_change, iter):
     was_shifted = False
     for column in df.columns[1:iter]:
         print(f"Checking column {column} for repetition with {column_to_change}")
-        if (
-            column == column_to_change
-        ):  # necessary to skip the column that is being changed
+        if column == column_to_change:
             continue
         was_shifted = move_columns(df, column, column_to_change)
 
@@ -50,9 +46,7 @@ def fix_repetition(df):
     iter = -1 * len(df.columns[2:])
 
     was_shifted = True
-    # skip carrier_letter and first column and fix repetition in the rest of the columns
     for column_to_change in df.columns[2:]:
-        # print(column_to_change)
         while was_shifted:
             was_shifted = False
             was_shifted = fix_repetition_for_one_column(df, column_to_change, iter)

@@ -22,8 +22,8 @@ def generate_character_mapping():
 def generate_alphabet_df():
     # dataframe with indexes from 'a' to 'z' and columns 'value_1' to 'value_8'
     alphabet_df = pd.DataFrame(
-        index=[chr(i) for i in range(ord("a"), ord("d") + 1)],
-        columns=["column_" + str(i) for i in range(1, 3)],
+        index=[chr(i) for i in range(ord("a"), ord("z") + 1)],
+        columns=["column_" + str(i) for i in range(1, 8)],
     )
     alphabet_df.index.name = "carrier_letter"
 
@@ -35,5 +35,5 @@ def generate_alphabet_df():
             ascii_low = ascii_low.replace(c, "")
 
     alphabet_df.reset_index(level=0, inplace=True)
-
+    print(alphabet_df)
     return alphabet_df
