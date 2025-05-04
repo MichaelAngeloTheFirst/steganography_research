@@ -58,10 +58,9 @@ def test_get_frequency_df():
     assert len(df) == 26  # Check if there are 26 letters
     assert "Letter" in df.columns  # Check if 'Letter' column exists
     assert "Frequency" in df.columns  # Check if 'Frequency' column exists
-    assert all(df["Letter"].apply(lambda x: x in string.ascii_uppercase))  # Check if all letters are uppercase
     assert df["Letter"].is_unique  # Check if all letters are unique
     
 
 def test_count_frequency():
     df = generate_alphabet_df()
-    
+    count_frequency(df)

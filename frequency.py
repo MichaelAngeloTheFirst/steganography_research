@@ -14,5 +14,21 @@ def get_frequency_df():
 
 
 def count_frequency(df):
+    # TO DO: Implement the function to count frequency of letters in the dataframe
+    # take dataframe and add sum of frequency of each letter in the row
+    # and add it to the last column
+    df_frequency = get_frequency_df()
+    sum_frequency = []
+    
+    for column in df.columns[1:]:
+        one_column_sum = 0
+        for value in df[column]:
+            # print(value)
+            # one_column_sum += 
+            print()
+
+    
     pass
+    
+    
         
