@@ -19,7 +19,7 @@ def move_columns(df, column, column_to_change):
     was_shifted = False
 
     while any(df[column] == df[column_to_change]):
-        print(f"Column {column} has same values as {column_to_change}")
+        # print(f"Column {column} has same values as {column_to_change}")
         shift_single_column(df, column_to_change)
         was_shifted = True
         iter += 1
@@ -50,7 +50,7 @@ def fix_repetition(df):
         while was_shifted:
             was_shifted = False
             was_shifted = fix_repetition_for_one_column(df, column_to_change, iter)
-            print(column_to_change)
+            # print(column_to_change)
 
         iter += 1
         was_shifted = True

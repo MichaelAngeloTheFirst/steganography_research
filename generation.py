@@ -1,39 +1,41 @@
 import pandas as pd
+import numpy as np
 import random
 import string
 
 
-def generate_alphabet_tuples():
-    return [(chr(i), []) for i in range(ord("a"), ord("z") + 1)]
+def check_duplicates(array):
+    for i in range(len(array)):
+        if len(set(array[i])) != len(array[i]):
+            return False  # Return False as soon as a duplicate is found
+    return True
 
 
-def generate_character_mapping():
-    alphabet_tuples = generate_alphabet_tuples()
-    for i in range(8):
-        ascii_low = string.ascii_lowercase
-        for t in alphabet_tuples:
-            c = random.choice(ascii_low)
-            t[1].append(c)
-            ascii_low = ascii_low.replace(c, "")
-
-    return alphabet_tuples
+def generate_shuffled_alphabet():
+    shuffled_alphabet = list(string.ascii_lowercase)
+    random.shuffle(shuffled_alphabet)
+    return shuffled_alphabet
 
 
-def generate_alphabet_df():
-    # dataframe with indexes from 'a' to 'z' and columns 'value_1' to 'value_8'
-    alphabet_df = pd.DataFrame(
-        index=[chr(i) for i in range(ord("a"), ord("z") + 1)],
-        columns=["column_" + str(i) for i in range(1, 8)],
-    )
-    alphabet_df.index.name = "carrier_letter"
+def generate_unique_dataframe():
+    rows, cols = 26, 8
 
-    for each_column in alphabet_df.columns:
-        ascii_low = string.ascii_lowercase
-        for each_index in alphabet_df.index:
-            c = random.choice(ascii_low)
-            alphabet_df.loc[each_index, each_column] = c
-            ascii_low = ascii_low.replace(c, "")
+    td_array = np.empty((rows, cols), dtype=str)
 
-    alphabet_df.reset_index(level=0, inplace=True)
-    print(alphabet_df)
-    return alphabet_df
+    for c in range(cols):
+        td_array[:, c] = generate_shuffled_alphabet()
+
+        iterations = 0
+        while not check_duplicates(td_array[:, : c + 1]):
+            td_array[:, c] = generate_shuffled_alphabet()
+            iterations += 1
+
+        print(f"Iteration: {iterations}")
+
+    print(td_array)
+    return pd.DataFrame(td_array, columns=[f"column_{i}" for i in range(1, 9)])
+
+
+if __name__ == "__main__":
+    df = generate_unique_dataframe()
+    print(len(df.columns))
