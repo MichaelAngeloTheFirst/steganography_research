@@ -2,10 +2,9 @@ import string
 import pandas as pd
 import pytest
 
-# from main import fix_repetition, shift_single_column
 
-# # from generation import generate_alphabet_df, generate_character_mapping
-# from frequency import get_frequency_df, count_frequency
+
+from frequency import count_frequency
 from generation import generate_unique_dataframe, check_duplicates
 
 
@@ -18,3 +17,14 @@ def test_generate_uniqe_dataframe():
     assert check_duplicates([t[1] for t in alphabet_tuples]), (
         "Mappings should be unique"
     )
+
+
+def test_count_frequency():
+    df = generate_unique_dataframe()
+    i=0
+    while count_frequency(df):
+        df = generate_unique_dataframe()
+        print(f"Iteration: {i}")
+        i+=1
+    
+    # print(df)

@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import random
 import string
+from frequency import get_frequency_df
 
 
 def check_duplicates(array):
@@ -18,6 +19,18 @@ def generate_shuffled_alphabet():
 
 
 def generate_unique_dataframe():
+    td_array = generate_unique_arr()
+    return pd.DataFrame(td_array, columns=[f"column_{i}" for i in range(1, 9)])
+    
+    
+    
+    
+    
+    
+    
+    
+    
+def generate_unique_arr():
     rows, cols = 26, 8
 
     td_array = np.empty((rows, cols), dtype=str)
@@ -30,12 +43,12 @@ def generate_unique_dataframe():
             td_array[:, c] = generate_shuffled_alphabet()
             iterations += 1
 
-        print(f"Iteration: {iterations}")
+        # print(f"Iteration: {iterations}")
 
-    print(td_array)
-    return pd.DataFrame(td_array, columns=[f"column_{i}" for i in range(1, 9)])
+    # print(td_array)
+    return td_array
 
 
 if __name__ == "__main__":
-    df = generate_unique_dataframe()
-    print(len(df.columns))
+    arr = generate_unique_dataframe()
+    # print(arr)
