@@ -52,7 +52,7 @@ def generate_unique_arr():
         # tracking count of excluded rows
         excluded_rows = 0
         long_loop += 1
-        if long_loop > 40:
+        if long_loop > 50:
             long_loop = 0
             # print(td_array)
             print("Long loop detected, regenerating the entire array")
@@ -104,6 +104,11 @@ def generate_unique_arr():
     return td_array
 
 
+def save_to_csv(array, filename="unique_array.csv"):
+    df = pd.DataFrame(array, columns=[f"column_{i}" for i in range(1, 9)])
+    df.to_csv(filename, index=False, header=True)
+
+
 if __name__ == "__main__":
     # Test the function
     td_array = generate_unique_arr()
@@ -112,3 +117,5 @@ if __name__ == "__main__":
     print(f"are columns unique: {check_column_duplicates(td_array)}")
     sums, delta = test_frequency(td_array)
     print(f"max: {max(sums)} min: {min(sums)} \n delta: {delta}")
+    # save the array to a CSV file
+    save_to_csv(td_array)
