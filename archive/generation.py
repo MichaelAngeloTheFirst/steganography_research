@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import random
 import string
-from frequency import get_frequency_df
+from archive.frequency import get_frequency_df
 import time
 
 benchmark_for_generate_unique_arr = []

@@ -2,8 +2,10 @@ import pandas as pd
 import numpy as np
 import random
 import string
-from frequency import get_frequency_df
+from archive.frequency import get_frequency_df
 import time
+
+from helpers import check_duplicates, check_column_duplicates, test_frequency
 
 
 def generate_shuffled_alphabet(values_to_remove=[]):
@@ -12,29 +14,19 @@ def generate_shuffled_alphabet(values_to_remove=[]):
     return shuffled_alphabet
 
 
-def check_duplicates(array):
-    for i in range(len(array)):
-        if len(set(array[i])) != len(array[i]):
-            return False  # Return False as soon as a duplicate is found
-    return True
+def first_not_in_second(list1, list2):
+    difference = set(list1) - set(list2)
+    for item in list1:
+        if item in difference:
+            return item
+    return None
 
-def check_column_duplicates(array):
-    for col in range(array.shape[1]):
-        if len(set(array[:, col])) != len(array[:, col]):
-            return False  # Return False as soon as a duplicate is found
-    return True
 
-def test_frequency(array):
-    df_freq = get_frequency_df()
-    freq_map = dict(zip(df_freq["Letter"], df_freq["Frequency"]))
-    sums = []
-    # Check frequency of each row and match values with delta
+def no_empty_values(array):
     for row in array:
-        one_row_sum = 0
-        for value in row:
-            one_row_sum += freq_map[value]
-        sums.append(one_row_sum)
-    return sums,  max(sums) - min(sums)
+        if "" in row:
+            return False
+    return True
 
 
 def generate_unique_arr():
@@ -42,59 +34,70 @@ def generate_unique_arr():
     rows, cols = 26, 8
     td_array = np.empty((rows, cols), dtype=str)
 
-    # Generate without duplicates
+    # 1------- GENERATE WITH DUPLICATES -------
     for c in range(cols):
         td_array[:, c] = generate_shuffled_alphabet()
 
         while not check_duplicates(td_array[:, : c + 1]):
             td_array[:, c] = generate_shuffled_alphabet()
 
-    # regenerate to match frequency
+    # 2------- CHECK FREQUENCY  -------
+    # Get frequency map from the frequency dataframe
     df_freq = get_frequency_df()
     freq_map = dict(zip(df_freq["Letter"], df_freq["Frequency"]))
 
-   
+    long_loop = 0
 
-    
-    while  True:
+    while True:
         # tracking count of excluded rows
         excluded_rows = 0
-        
+        long_loop += 1
+        if long_loop > 40:
+            long_loop = 0
+            # print(td_array)
+            print("Long loop detected, regenerating the entire array")
+            td_array = np.empty((rows, cols), dtype=str)
+
+            # 1------- GENERATE WITH DUPLICATES -------
+            for c in range(cols):
+                td_array[:, c] = generate_shuffled_alphabet()
+
+                while not check_duplicates(td_array[:, : c + 1]):
+                    td_array[:, c] = generate_shuffled_alphabet()
+
         # Check frequency of each row and match values with delta
         for row in td_array:
             one_row_sum = 0
             for value in row:
-                one_row_sum += freq_map[value]
+                # Check if the value is in the frequency map
+                if value in freq_map:
+                    one_row_sum += freq_map[value]
             if one_row_sum > 32 or one_row_sum < 28:
                 excluded_rows += 1
                 row.fill("")
-        
-        if excluded_rows == 0:
+
+        if excluded_rows == 0 and no_empty_values(td_array):
             break
 
         print(f"Excluded rows: {excluded_rows}")
 
-        # Regenerate columns with empty rows
+        # Regenerate values for columns with empty rows
         for c in range(cols):
-            # make array of existing values
-            # existing_values = [value for value in td_array[:, c] if value != ""] #fix td_array[c] instead of td_array[:, c]
-            
-            # # Generate shuffled alphabet excluding existing values
-            # new_values = generate_shuffled_alphabet(existing_values)
-            
-            # Fill empty rows with new values no duplicates in each row
+            existing_values = [value for value in td_array[:, c] if value != ""]
+            missing_values = generate_shuffled_alphabet(existing_values)
+
             for i in range(len(td_array)):
                 if td_array[i, c] == "":
-                    existing_values = [value for value in td_array[:,c] if value != ""]
-                    new_values = generate_shuffled_alphabet(existing_values)
-                    td_array[i, c] = new_values.pop(0)
-                    
-                    # Check if the new value is unique in the row
-                    while td_array[i, c] in td_array[i, :c]:
-                        existing_values = [value for value in td_array[:,c] if value != ""]
-                        new_values = generate_shuffled_alphabet(existing_values)
-                        td_array[i, c] = new_values.pop(0)
-                    
+                    # get values from the row
+                    row_values = [value for value in td_array[i, :] if value != ""]
+
+                    value_to_add = first_not_in_second(missing_values, row_values)
+                    if value_to_add is not None:
+                        td_array[i, c] = value_to_add
+                        missing_values.remove(value_to_add)
+                    else:
+                        print("No value to add")
+                        break
 
     end_time = time.time()
     print(f"Time taken to generate unique array: {end_time - start_time} seconds")
@@ -105,7 +108,7 @@ if __name__ == "__main__":
     # Test the function
     td_array = generate_unique_arr()
     print(td_array)
-    print(f'are rows unique: {check_duplicates(td_array)}')
-    print(f'are columns unique: {check_column_duplicates(td_array)}')
+    print(f"are rows unique: {check_duplicates(td_array)}")
+    print(f"are columns unique: {check_column_duplicates(td_array)}")
     sums, delta = test_frequency(td_array)
-    print(f'max: {max(sums)} min: {min(sums)} delta: {delta}')
+    print(f"max: {max(sums)} min: {min(sums)} \n delta: {delta}")

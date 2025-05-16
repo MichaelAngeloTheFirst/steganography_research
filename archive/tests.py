@@ -5,8 +5,8 @@ import pytest
 from main import fix_repetition, shift_single_column
 
 # from generation import generate_alphabet_df, generate_character_mapping
-from frequency import get_frequency_df, count_frequency
-from generation import generate_dataframe
+from archive.frequency import get_frequency_df, count_frequency
+from archive.generation import generate_dataframe
 
 
 ## ----- TESTS FOR GENERATION ---- ##
