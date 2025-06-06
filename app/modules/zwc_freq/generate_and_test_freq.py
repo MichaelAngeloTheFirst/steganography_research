@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import random
 import string
-from archive.frequency import get_frequency_df
+from app.modules.zwc_freq.helpers import get_frequency_df
 import time
 
-from helpers import check_duplicates, check_column_duplicates, test_frequency
+from zwc_freq.helpers import check_duplicates, check_column_duplicates, test_frequency
 
 
 def generate_shuffled_alphabet(values_to_remove=[]):
@@ -28,7 +28,7 @@ def no_empty_values(array):
             return False
     return True
 
-
+# the function to be used to generate the unique array
 def generate_unique_arr():
     start_time = time.time()
     rows, cols = 26, 8
@@ -109,13 +109,17 @@ def save_to_csv(array, filename="unique_array.csv"):
     df.to_csv(filename, index=False, header=True)
 
 
-if __name__ == "__main__":
-    # Test the function
-    td_array = generate_unique_arr()
-    print(td_array)
-    print(f"are rows unique: {check_duplicates(td_array)}")
-    print(f"are columns unique: {check_column_duplicates(td_array)}")
-    sums, delta = test_frequency(td_array)
-    print(f"max: {max(sums)} min: {min(sums)} \n delta: {delta}")
-    # save the array to a CSV file
-    save_to_csv(td_array)
+
+
+# if __name__ == "__main__":
+
+#     # Test the function
+#     td_array = generate_unique_arr()
+#     print(td_array)
+#     print(f"are rows unique: {check_duplicates(td_array)}")
+#     print(f"are columns unique: {check_column_duplicates(td_array)}")
+#     sums, delta = test_frequency(td_array)
+#     print(f"max: {max(sums)} min: {min(sums)} \n delta: {delta}")
+#     # save the array to a CSV file
+#     save_to_csv(td_array)
+
