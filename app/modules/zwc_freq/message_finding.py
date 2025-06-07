@@ -11,7 +11,7 @@ def decode_zwc_to_col(zwc_pair):
 # Extract secret message from carrier message
 # Looks for ZWC pairs before a character, decodes which row and col, and gets the letter
 
-def extract_secret_from_carrier(stego, file_path= "unique_array.csv"):
+def extract_secret_from_carrier(stego, file_path= "./unique_array.csv"):
     df = pd.read_csv(file_path)
     
     df = df.iloc[:26, :8]

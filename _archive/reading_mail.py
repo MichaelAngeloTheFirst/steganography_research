@@ -3,7 +3,7 @@ import email
 from email.header import decode_header
 from dotenv import load_dotenv
 import os 
-from zwc_freq.message_finding import extract_secret_from_carrier
+from app.modules.zwc_freq.message_finding import extract_secret_from_carrier
 import pandas as pd
 # from zwc_freq.message_hiding import extract_secret_from_carrier
 
