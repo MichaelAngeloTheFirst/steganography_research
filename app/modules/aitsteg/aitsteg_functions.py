@@ -1,7 +1,3 @@
-"""
-aitsteg_functions.py
-Functions for embedding and extracting a secret message using the AITSteg algorithm as implemented in the notebook.
-"""
 import math
 import time
 

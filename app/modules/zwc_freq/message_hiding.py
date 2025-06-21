@@ -26,6 +26,12 @@ def hide_secret_in_carrier(secret, carrier, file_path = "./unique_array.csv"):
     unique_array =df.values.tolist()
     #-------------------------------
     
+    # remove zwc characters from carrier and secret
+    carrier = [c for c in carrier if c not in ZWC]
+    secret = [s for s in secret if s not in ZWC]
+    # Ensure carrier is a list of characters
+        
+    
     carrier = list(carrier)
     used = [False] * len(carrier)
     secret = [c.lower() for c in secret if c.lower() in string.ascii_lowercase]
