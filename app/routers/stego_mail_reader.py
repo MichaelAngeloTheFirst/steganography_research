@@ -7,7 +7,7 @@ import imaplib
 import email
 from email.header import decode_header
 import pandas as pd
-from app.modules.zwc_freq.message_finding import extract_secret_from_carrier
+from app.modules.zwc_freq.message_finding import extract_secret_from_carrier, print_visible_zwc
 from app.modules.aitsteg.aitsteg_functions import extract_secret
 from dateutil import parser as date_parser
 from pydantic import BaseModel
@@ -41,7 +41,7 @@ def read_latest_stego_mail(request: StegoMailRequest):
         if not email_ids:
             mail.logout()
             raise HTTPException(status_code=404, detail="No emails found in inbox.")
-        for eid in list(reversed(email_ids))[:1]:
+        for eid in list(reversed(email_ids))[:5]:
             _, msg_data = mail.fetch(eid, "(RFC822)")
             raw_email = msg_data[0][1]
             msg = email.message_from_bytes(raw_email)
@@ -82,6 +82,8 @@ def read_latest_stego_mail(request: StegoMailRequest):
                     body = msg.get_payload(decode=True).decode(errors="ignore")
                 mail.logout()
                 hidden_message = extract_secret_from_carrier(body, './modules/zwc_freq/unique_array.csv')
+                print_visible_zwc(subject)
+                print_visible_zwc(body)
                 response = StegoMailResponse(
                     from_=from_,
                     subject=subject,

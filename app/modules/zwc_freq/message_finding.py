@@ -37,3 +37,15 @@ def extract_secret_from_carrier(stego, file_path= "./unique_array.csv"):
     return ''.join(secret)
 
 # Helper to load unique_array as a 2D list
+
+def print_visible_zwc(text):
+    # Map ZWC to visible tags
+    zwc_map = {
+        '\u200c': '[ZWNJ]',
+        '\u202c': '[PDF]',
+        '\u202d': '[LRO]',
+        '\u200e': '[LRM]',
+    }
+    for zwc, tag in zwc_map.items():
+        text = text.replace(zwc, tag)
+    print(text)
