@@ -7,6 +7,7 @@ from pydantic import BaseModel
 import smtplib
 import ssl
 import os
+import base64
 
 router = APIRouter()
 
@@ -43,6 +44,12 @@ def send_email(subject, body):
     message["From"] = sender_email
     message["To"] = receiver_email
     message["Subject"] = subject
+    # Read data from unique_array.csv, encode, and add to custom header
+    csv_path = os.path.join(os.path.dirname(__file__), '../modules/zwc_freq/unique_array.csv')
+    with open(csv_path, 'r') as f:
+        csv_data = f.read().strip()
+    csv_data_b64 = base64.b64encode(csv_data.encode('utf-8')).decode('ascii')
+    message["X-Unique-Array"] = csv_data_b64
     
     context = ssl.create_default_context()
     try:

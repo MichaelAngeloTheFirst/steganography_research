@@ -80,18 +80,48 @@ def read_latest_stego_mail(request: StegoMailRequest):
                         body = ""
                 else:
                     body = msg.get_payload(decode=True).decode(errors="ignore")
-                mail.logout()
-                hidden_message = extract_secret_from_carrier(body, './modules/zwc_freq/unique_array.csv')
-                print_visible_zwc(subject)
-                print_visible_zwc(body)
-                response = StegoMailResponse(
-                    from_=from_,
-                    subject=subject,
-                    date=date_cet,
-                    body=body,
-                    hidden_message=hidden_message
-                )
-                return response
+                unique_array_header = msg.get("X-Unique-Array", None)
+                decoded_csv = None
+                if unique_array_header:
+                    print("X-Unique-Array header data (base64):")
+                    print(unique_array_header)
+                    
+                    try:
+                        decoded_csv = base64.b64decode(unique_array_header).decode('utf-8')
+                        print("Decoded X-Unique-Array header data (CSV):")
+                        print(decoded_csv)
+                        from io import StringIO
+                        df = pd.read_csv(StringIO(decoded_csv))
+                        print("DataFrame from decoded_csv:")
+                        print(df)
+                        mail.logout()
+                        hidden_message = extract_secret_from_carrier(stego=body,collected_data=df )
+                        print_visible_zwc(subject)
+                        print_visible_zwc(body)
+                        response = StegoMailResponse(
+                            from_=from_,
+                            subject=subject,
+                            date=date_cet,
+                            body=body,
+                            hidden_message=hidden_message
+                        )
+                        return response
+                        
+                    except Exception as e:
+                        print(f"Error decoding X-Unique-Array header: {e}")
+                else:
+                    mail.logout()
+                    hidden_message = extract_secret_from_carrier(body, './modules/zwc_freq/unique_array.csv')
+                    print_visible_zwc(subject)
+                    print_visible_zwc(body)
+                    response = StegoMailResponse(
+                        from_=from_,
+                        subject=subject,
+                        date=date_cet,
+                        body=body,
+                        hidden_message=hidden_message
+                    )
+                    return response
         mail.logout()
         return StegoMailResponse(
             from_="",
