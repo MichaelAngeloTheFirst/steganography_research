@@ -59,7 +59,7 @@ def read_latest_stego_mail(request: StegoMailRequest):
                 else:
                     subject += part
             # Check the secret
-            if request.passwd == extract_secret(subject):
+            if request.passwd == extract_secret(subject, os.getenv("SENDER_EMAIL")):
                 from_ = msg.get("From")
                 date_ = msg.get("Date")
                 try:

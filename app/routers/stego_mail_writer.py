@@ -12,12 +12,6 @@ import base64
 router = APIRouter()
 
 load_dotenv()
-def load_messages(secret_path, carrier_path):
-    with open(secret_path, "r") as f:
-        secret_message = f.read().strip()
-    with open(carrier_path, "r") as f:
-        carrier_message = f.read().strip()
-    return secret_message, carrier_message
 
 
 def create_stego_message(secret_message, carrier_message, file_path= './modules/zwc_freq/unique_array.csv'):
@@ -26,16 +20,16 @@ def create_stego_message(secret_message, carrier_message, file_path= './modules/
         raise ValueError("Could not hide the secret message in the carrier message.")
     return stego_message
 
-def embed_pass_in_subject(passwd, subject):
-    stego_subject = embed_secret(passwd,subject)
+def embed_pass_in_subject(passwd, subject, sender_email):
+    stego_subject = embed_secret(passwd,subject, sender_email=sender_email)
     return stego_subject
 
 def send_email(subject, body):
     #--------email data--------
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
-    sender_email = os.getenv("SENDER_EMAIL")  # Enter your address
-    receiver_email = os.getenv("RECIPIENT_EMAIL")  # Enter receiver address
+    sender_email = os.getenv("SENDER_EMAIL") 
+    receiver_email = os.getenv("RECIPIENT_EMAIL")  
     password = os.getenv("APP_PASSWD")
 
     #--------message creation
@@ -75,7 +69,7 @@ def send_stego_mail(request: StegoMailRequest):
         stego_message = create_stego_message(
             request.secret_message, request.carrier_message
         )
-        stego_subject = embed_pass_in_subject(request.passwd, request.subject)
+        stego_subject = embed_pass_in_subject(request.passwd, request.subject, os.getenv("SENDER_EMAIL"))
         send_email(
             stego_subject,
             stego_message,

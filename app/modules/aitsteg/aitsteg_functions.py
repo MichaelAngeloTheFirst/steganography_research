@@ -14,14 +14,19 @@ def get_alfa(factors, ni):
 def my_xor(a, b, n):
     return ''.join('0' if a[i] == b[i] else '1' for i in range(n))
 
-def embed_secret(SM, CM, MS_SK=111):
+def embed_secret(SM, CM, sender_email=None):
     """
     Embed a secret message SM into a cover message CM using the AITSteg algorithm.
-    Optionally, provide MS_SK (int, 3 digits from current time by default).
+    It is necessary to provide sender_email (used to generate MS_SK).
     Returns the stego message (CM_HM).
     """
-    if MS_SK is None:
-        MS_SK = int(time.strftime("%H%M", time.localtime())[:3])
+    if sender_email is None:
+        raise ValueError("sender_email must be provided for key generation.")
+    # Take part before @
+    username = sender_email.split('@')[0]
+    ascii_sum = sum(ord(c) for c in username)%255
+    MS_SK = ascii_sum + 100 if ascii_sum < 100 else ascii_sum
+    
     MS_SK_bin = format(MS_SK, '08b')
     SM_binary = ''
     for letter in SM:
@@ -57,14 +62,17 @@ def embed_secret(SM, CM, MS_SK=111):
     CM_HM = CM[:-1] + HM + CM[-1]
     return CM_HM
 
-def extract_secret(CM_HM, MR_SK=111):
+def extract_secret(CM_HM, sender_email=None):
     """
     Extract the secret message from a stego message CM_HM using the AITSteg algorithm.
-    Optionally, provide MR_SK (int, 3 digits from current time by default).
+    Optionally, provide sender_email (used to generate MR_SK).
     Returns the extracted secret message (SM_extract).
     """
-    if MR_SK is None:
-        MR_SK = int(time.strftime("%H%M", time.localtime())[:3])
+    if sender_email is None:
+        raise ValueError("sender_email must be provided for key generation.")
+    username = sender_email.split('@')[0]
+    ascii_sum = sum(ord(c) for c in username)%255
+    MR_SK = ascii_sum + 100 if ascii_sum < 100 else ascii_sum
     MR_SK_binary = '{0:08b}'.format(int(MR_SK))
     # Use the global ZWC_reverse directly (already correct)
     hashed_SM_binary_extract = ""
